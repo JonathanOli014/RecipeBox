@@ -1,0 +1,13 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% block content %}
+    
+    <form class="delete_recipe" action="{% url 'delete_recipe' object.pk %}" method="post">
+        <h1>Delete Recipe</h1>
+        {% csrf_token %}
+        
+        <p>Are you sure you want to delete" {{recipe.recipeName}}"?</p>
+        <input type="submit" value="Confirm">
+    </form>
+    <script src="{% static 'js/base.js' %}"></script>
+{% endblock content %}

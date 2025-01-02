@@ -1,0 +1,53 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% block content %}
+
+    <form class="add_recipe" action="{% url 'add_recipe' %}" method="post">
+        <h1>New Recipe</h1>
+        {% csrf_token %}
+        
+            <div class="recipe-name">
+                <label for="recipe_name">Recipe Name:</label>
+                <input type="text" name="recipeName" id="recipe_name" required><br><br>
+            </div>
+
+            <div class="recipe-category">
+                <label for="recipe_category">Category:</label>
+                <select name="recipeCategory" id="recipe_category" multiple required>
+                    {% for category in categories %}
+                        <option value="{{category.pk}}" {% if category.pk in form.categories.value %} selected {% endif %}>
+                            {{category}}
+                        </option>
+                    {% endfor %}
+                </select><br><br>
+            </div>
+
+            <div class="created-by">
+                <label for="created_by">Created By:</label>
+                <select name="createdBy" id="created_by">
+                    {% for user in users %}
+                        <option value="{{user.pk}}" {% if user.pk == form.user.value %} selected {% endif %}>
+                            {{user}}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <h3>Ingredients</h3>
+            <div id="ingredients-container">
+                <input type="text" name="ingredients" placeholder="Input Ingredient here..." required><br><br>
+            </div>
+            <button type="button" onclick="addIngredientField()">Add Ingredient</button><br>
+
+            <h3>Instructions</h3>
+            <div id="instructions-container">
+                <textarea name="instruction" placeholder="Input Instruction here..." required></textarea><br><br>
+            </div>
+            <button type="button" onclick="addInstructionField()">Add Instruction</button><br><br>
+
+            <input type="submit" value="Add Recipe">
+    </form>
+    
+    <script src="{% static 'js/base.js' %}"></script>
+
+{% endblock content %}

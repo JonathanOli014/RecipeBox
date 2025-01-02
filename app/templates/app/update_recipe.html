@@ -1,0 +1,58 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% block content %}
+
+    <form class="edit_recipe" action="{% url 'update_recipe' object.pk %}" method="post">
+        <h1>Edit Recipe</h1>
+        {% csrf_token %}
+ 
+        <h3>{{object.recipeName}}</h3>
+        <div class="recipe-name">
+            <label for="recipe_name">Recipe Name:</label>
+            <input type="text" name="recipeName" id="recipe_name" value="{{ object.recipeName }}" required><br><br>
+        </div>
+
+        <div class="recipe-category">
+            <label for="recipe_category">Category:</label>
+            <select name="recipeCategory" id="recipe_category" multiple required>
+                {% for category in categories %}
+                    <option value="{{ category.pk }}" {% if category.pk in selected_categories %} selected {% endif %}>
+                        {{category}}
+                    </option>
+                {% endfor %}
+            </select><br><br>
+        </div>
+
+        <div class="created-by">
+            <label for="created_by">Created By:</label>
+            <select name="createdBy" id="created_by">
+                {% for user in users %}
+                    <option value="{{ user.pk }}" {% if user.pk == object.createdBy.pk %} selected {% endif %}>
+                        {{user}}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <h3>Ingredients</h3>
+        <div id="ingredients-container">
+            {% for ingredient in object.ingredients.all %}
+                <input type="text" name="ingredients" value="{{ ingredient.name }}" placeholder="Input Ingredient here" required><br><br>
+            {% endfor %}
+        </div>
+        <button type="button" onclick="addIngredientField()">Add Ingredient</button><br>
+
+        <h3>Instructions</h3>
+        <div id="instructions-container">
+            {% for instruction in object.instructions.all %}
+                <textarea name="instruction" placeholder="Input Instruction here" required>{{ instruction.instruction }}</textarea><br><br>
+            {% endfor %}
+        </div>
+        <button type="button" onclick="addInstructionField()">Add Instruction</button><br><br>
+
+        <input type="submit" value="Update Recipe">
+    </form>
+
+    <script src="{% static 'js/base.js' %}"></script>
+
+{% endblock content %}

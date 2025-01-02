@@ -1,0 +1,31 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% block content %}
+    <br>
+    <div class="recipe_list">
+        <a href="{% url 'add_recipe' %}">+ New Recipe</a>
+        {% for recipe in recipes  %}
+            <h1><a href="{% url 'view_recipe' recipe.pk %}">{{ recipe.recipeName }}</a></h1>
+            
+            <p>
+                <b>By:</b>
+                {{ recipe.createdBy }}
+            </p>
+
+            <p>
+                <b>Category:</b>
+                {% for category in recipe.recipeCategory.all %}
+                    {{ category.categoryName }}{% if not forloop.last %}, {% endif %}
+                {% endfor %}
+            </p>
+            
+            <p>
+                <b>Posted At:</b>
+                {{ recipe.createdAt }} <br>
+            </p>
+        {% endfor %}
+    </div>
+ <script src="{% static 'js/base.js' %}"></script>
+
+{% endblock content %}
+

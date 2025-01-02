@@ -1,0 +1,41 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% block content %}
+    <div class="view_recipe">
+        <h1>{{view_recipe.recipeName }}</h1>
+
+        <p>
+            <b>By:</b>
+            {{ view_recipe.createdBy }}
+        </p>
+        
+        <p>
+            <b>Category:</b>
+            {% for category in view_recipe.recipeCategory.all %}
+                {{ category.categoryName }}{% if not forloop.last %}, {% endif %}
+            {% endfor %}
+        </p>
+        
+        <h4>Ingredients</h4>
+        <ul>
+            {% for ingredient in view_recipe.ingredients.all %}
+                <li>{{ ingredient.name }}</li>
+            {% endfor %}
+        </ul>
+        
+        <h4>Instructions</h4>
+        <ol>
+            {% for instruction in view_recipe.instructions.all %}
+                <li>{{ instruction.instruction }}</li>
+            {% endfor %}
+        </ol>
+        
+        <p>
+            <b>Posted At:</b>
+            {{ view_recipe.createdAt }} <br>
+        </p>
+        <a href="{% url 'update_recipe' view_recipe.pk %}">+ Edit Recipe</a> &nbsp;&nbsp;
+        <a href="{% url 'delete_recipe' view_recipe.pk %}">- Delete Recipe</a>
+    </div>
+    
+{% endblock content %}
