@@ -2,40 +2,156 @@
 {% load static %}
 {% block content %}
     <div class="view_recipe">
-        <h1>{{view_recipe.recipeName }}</h1>
+        <br>
+        <div class="title_flex">
+            <h1>{{view_recipe.recipeName }}</h1>
+            <p> <i class="fas fa-star"></i> {{ average_rating|default:"No ratings yet" }} </p>
+        </div>
+        <div class="sup_info">
+            <p class="category">
+                Category: 
+                <i class="fas fa-tags"></i>
+                {% for category in view_recipe.recipeCategory.all %}
+                    {{ category.categoryName }}{% if not forloop.last %}, {% endif %}
+                {% endfor %}
+            </p>
+        </div>
 
-        <p>
-            <b>By:</b>
-            {{ view_recipe.createdBy }}
-        </p>
-        
-        <p>
-            <b>Category:</b>
-            {% for category in view_recipe.recipeCategory.all %}
-                {{ category.categoryName }}{% if not forloop.last %}, {% endif %}
+        <div class="recipe_imageview">
+                {% if view_recipe.recipeImage %}
+                    <img src="{{ view_recipe.recipeImage.url }}" alt="{{ view_recipe.recipeName }}">
+                {% else %}
+                    <img src="/media/images/default.jpg" alt="{{ view_recipe.recipeName }}">
+                {% endif %}
+            <div class="creator_info">
+                <div class="creator_profile">
+                    {% if view_recipe.createdBy.userprofile.profile_picture %}
+                        <img src="{{ view_recipe.createdBy.userprofile.profile_picture.url }}" alt="{{ view_recipe.createdBy.username }}">
+                    {% else %}
+                        <img src="/media/profile_pictures/default.jpg" alt="{{ view_recipe.createdBy.username }}">
+                    {% endif %}
+                </div>
+
+                <strong><p><i>Creator</i></p></strong>
+                <p>{{ view_recipe.createdBy.first_name }} {{ view_recipe.createdBy.last_name }}</p>
+                <p>
+                    <i class="fas fa-book"></i>
+                    {{ view_recipe.createdBy.recipe_set.count }} 
+                    {% if view_recipe.createdBy.recipe_set.count == 1 %}
+                        Recipe
+                    {% else %}
+                        Recipes
+                    {% endif %}
+                </p>
+                {% if user != view_recipe.createdBy %}
+                    <a href="{% url 'view_profile' view_recipe.createdBy.id %}">
+                        <button type="button" class="view_profile">
+                            <i class="fas fa-user"></i>
+                            View Profile
+                        </button>
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="sub_info"> 
+            <p class="serving">
+                Servings: <i class="fas fa-utensils"></i> {{ view_recipe.servings }}
+            </p>
+            <p class="cookTime">
+                Cook Time: <i class="fas fa-clock"></i> {{ view_recipe.cookTime }} mins
+            </p>
+            <p class="calendar">
+                <i class="fas fa-calendar-alt"></i>
+                {{ view_recipe.createdAt }} <br>
+            </p>
+
+            {% if user.is_authenticated and user != view_recipe.createdBy %}
+                <a href="{% url 'save_recipe' view_recipe.pk %}">
+                    <button type="button" class="save_button">
+                        <i class="fas fa-bookmark"></i>
+                        Save Recipe
+                    </button>
+                </a>
+            {% endif %}
+
+            {% if user == view_recipe.createdBy %}
+                <a href="{% url 'update_recipe' view_recipe.pk %}">
+                    <button type="button" class="edit_button">
+                        <i class="fas fa-edit"></i>
+                        Edit
+                    </button>
+                </a>
+                <form class="delete_recipe" action="{% url 'delete_recipe' view_recipe.pk %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="delete_button" onclick="return confirm('Are you sure you want to delete this recipe?');">
+                        <i class="fas fa-trash"></i>
+                        Delete
+                    </button>
+                </form>
+            {% endif %}
+        </div>
+
+        <div class="container">
+            <h3>Description</h3>
+            <p>{{ view_recipe.recipeDescription }}</p>
+
+            <h3>Ingredients</h3>
+            <ul>
+                {% for ingredient in view_recipe.ingredients.all %}
+                    <li>{{ ingredient.name }}</li>
+                {% endfor %}
+            </ul>
+            
+            <h3>Instructions</h3>
+            <ol>
+                {% for instruction in view_recipe.instructions.all %}
+                    <li>{{ instruction.instruction }}</li>
+                {% endfor %}
+            </ol>
+        </div>
+        <div class="comments_section">
+            <h3>Comments</h3>
+            {% for comment in comments %}
+                <div class="comment">
+                    {% if comment.user.userprofile.profile_picture %}
+                        <img src="{{ comment.user.userprofile.profile_picture.url }}" alt="{{ comment.user.username }}" class="comment-profile-picture">
+                    {% else %}
+                        <img src="/media/profile_pictures/default.jpg" alt="{{ comment.user.username }}" class="comment-profile-picture">
+                    {% endif %}
+                        <p><strong>{{ comment.user.first_name }} {{ comment.user.last_name }}</strong> ({{ comment.createdAt }}) </p>
+                </div>
+                <p class="text_comment">{{ comment.text }}</p>
             {% endfor %}
-        </p>
-        
-        <h4>Ingredients</h4>
-        <ul>
-            {% for ingredient in view_recipe.ingredients.all %}
-                <li>{{ ingredient.name }}</li>
-            {% endfor %}
-        </ul>
-        
-        <h4>Instructions</h4>
-        <ol>
-            {% for instruction in view_recipe.instructions.all %}
-                <li>{{ instruction.instruction }}</li>
-            {% endfor %}
-        </ol>
-        
-        <p>
-            <b>Posted At:</b>
-            {{ view_recipe.createdAt }} <br>
-        </p>
-        <a href="{% url 'update_recipe' view_recipe.pk %}">+ Edit Recipe</a> &nbsp;&nbsp;
-        <a href="{% url 'delete_recipe' view_recipe.pk %}">- Delete Recipe</a>
+
+            {% if user.is_authenticated %}
+                <form method="post">
+                    {% csrf_token %}
+                    <textarea name="text" placeholder="Add a comment..." required></textarea>
+                    <button type="submit" name="comment">Comment</button>
+                </form>
+            {% else %}
+                <p>Login to add a comment.</p>
+            {% endif %}
+
+            <h3>Rate this Recipe</h3><br>
+            {% if user.is_authenticated and can_rate%}
+                <form class="formRating" method="post">
+                    {% csrf_token %}
+                    <div class="star-rating">
+                        {% for x in "12345" %}
+                            <input type="radio" id="star{{ x }}" name="score" value="{{ x }}" required>
+                            <label for="star{{ x }}" title="{{ x }} stars">
+                                <i class="fas fa-star"></i>
+                            </label>
+                        {% endfor %}
+                    </div>
+                    <button type="submit" name="rating">Rate</button>
+                </form>
+            {% elif user.is_authenticated %}
+                <p>You cannot rate your own recipe.</p>
+            {% else %}
+                <p>Login to rate this recipe.</p>
+            {% endif %}
     </div>
-    
 {% endblock content %}

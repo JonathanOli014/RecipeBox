@@ -1,56 +1,62 @@
 {% extends 'app/base.html' %}
 {% load static %}
 {% block content %}
-
-    <form class="edit_recipe" action="{% url 'update_recipe' object.pk %}" method="post">
+    <br>
+    <form class="edit_recipe" action="{% url 'update_recipe' object.pk %}" method="post" enctype="multipart/form-data">
         <h1>Edit Recipe</h1>
         {% csrf_token %}
- 
-        <h3>{{object.recipeName}}</h3>
-        <div class="recipe-name">
-            <label for="recipe_name">Recipe Name:</label>
-            <input type="text" name="recipeName" id="recipe_name" value="{{ object.recipeName }}" required><br><br>
+        <div class="form-group recipe-name">
+            <label for="recipe_name">Recipe Name</label>
+            <input type="text" name="recipeName" id="recipe_name" value="{{ object.recipeName }}" required>
         </div>
 
-        <div class="recipe-category">
-            <label for="recipe_category">Category:</label>
+        <div class="form-group recipe-category">
+            <label for="recipe_category">Category</label>
             <select name="recipeCategory" id="recipe_category" multiple required>
                 {% for category in categories %}
                     <option value="{{ category.pk }}" {% if category.pk in selected_categories %} selected {% endif %}>
                         {{category}}
                     </option>
                 {% endfor %}
-            </select><br><br>
-        </div>
-
-        <div class="created-by">
-            <label for="created_by">Created By:</label>
-            <select name="createdBy" id="created_by">
-                {% for user in users %}
-                    <option value="{{ user.pk }}" {% if user.pk == object.createdBy.pk %} selected {% endif %}>
-                        {{user}}
-                    </option>
-                {% endfor %}
             </select>
+        </div>
+        <div class="form-group recipe-description">
+            <label for="id_recipeDescription">Description</label>
+            <textarea name="recipeDescription" id="id_recipeDescription" required>{{ object.recipeDescription }}</textarea>
+        </div>
+    
+        <div class="form-group recipe-image">
+            <label for="recipeImage">Image</label>
+            <input type="file" name="recipeImage" id="recipeImage" accept="image/*">
+        </div>
+    
+        <div class="form-group recipe-servings">
+            <label for="id_servings">Servings</label>
+            <input type="number" name="servings" id="id_servings" value="{{ object.servings }}" required>
+        </div>
+    
+        <div class="form-group recipe-cooktime">
+            <label for="id_cookTime">Cook Time (minutes)</label>
+            <input type="number" name="cookTime" id="id_cookTime" value="{{ object.cookTime }}" required>
         </div>
 
         <h3>Ingredients</h3>
-        <div id="ingredients-container">
+        <div id="ingredients-container" class="form-group">
             {% for ingredient in object.ingredients.all %}
-                <input type="text" name="ingredients" value="{{ ingredient.name }}" placeholder="Input Ingredient here" required><br><br>
+                <input type="text" name="ingredients" value="{{ ingredient.name }}" placeholder="Input Ingredient here" required><br>
             {% endfor %}
         </div>
-        <button type="button" onclick="addIngredientField()">Add Ingredient</button><br>
+        <button type="button" onclick="addIngredientField()">Add Ingredient</button>
 
         <h3>Instructions</h3>
-        <div id="instructions-container">
+        <div id="instructions-container" class="form-group">
             {% for instruction in object.instructions.all %}
-                <textarea name="instruction" placeholder="Input Instruction here" required>{{ instruction.instruction }}</textarea><br><br>
+                <textarea name="instruction" placeholder="Input Instruction here" required>{{ instruction.instruction }}</textarea><br>
             {% endfor %}
         </div>
-        <button type="button" onclick="addInstructionField()">Add Instruction</button><br><br>
+        <button type="button" onclick="addInstructionField()">Add Instruction</button>
 
-        <input type="submit" value="Update Recipe">
+        <button type="submit">Update Recipe</button>
     </form>
 
     <script src="{% static 'js/base.js' %}"></script>

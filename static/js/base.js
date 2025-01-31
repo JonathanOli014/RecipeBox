@@ -7,7 +7,7 @@ function addIngredientField() {
     input.placeholder = 'Input Ingredient here...';
     container.append(input);
     container.append(document.createElement('br'));
-    container.append(document.createElement('br'));
+  
 }
 
 function addInstructionField() {
@@ -17,6 +17,5 @@ function addInstructionField() {
     textarea.required = true;
     textarea.placeholder = 'Input Instruction here...';
     container.append(textarea);
-    container.append(document.createElement('br'));
     container.append(document.createElement('br'));
 }

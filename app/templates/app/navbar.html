@@ -1,5 +1,76 @@
-<header>
-    <a href="{% url 'home' %}">Home</a>
-    <a href="{% url 'about' %}">About</a>
-    <a href="{% url 'list_recipe' %}">Recipes</a>
-</header>
+<nav class="navbar">
+    <div class="navbar-left">
+        <h1 class="project_title">RecipeBox</h1>
+    {% if user.is_authenticated %}
+        <form method="get" action="{% url 'list_recipe' %}" class="search-form">
+            <input type="text" placeholder="Search Recipe..." name="search" value="{{ request.GET.search }}">
+            <button type="submit">
+                <i class="fas fa-search"></i>
+                Search
+            </button>
+        </form>
+    </div>
+        <div class="navbar-right">
+            <span class="navbar-links">
+                <a href="{% url 'list_recipe' %}">
+                    <button type="button">
+                    <i class="fas fa-utensils"></i> 
+                    Recipes
+                    </button>
+                </a>
+                <a href="{% url 'saved_recipes' %}">
+                    <button type="button">
+                    <i class="fas fa-bookmark"></i>
+                    Saved Recipes
+                    </button>
+                </a>
+            </span>
+            <a href="{% url 'view_profile' user.id %}"> 
+                <button type="button" class="profile" >
+                    <div class="user-profile">
+                        {% if user.userprofile.profile_picture %}
+                        <img src="{{ user.userprofile.profile_picture.url }}" alt="{{ user.username }}" class="navbar-profile-picture">
+                        {% else %}
+                        <img src="/media/profile_pictures/default.jpg" alt="{{ user.username }}" class="navbar-profile-picture">
+                        {% endif %}
+                        <span>{{ user.first_name }} {{ user.last_name }}</span>
+                    </div>
+                </button>
+            </a>
+            <form method="post" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <span class="logout">
+                    <button type="submit" class="tooltip_logout">
+                        <span class="tooltiptext_logout">Logout</span>
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </span>
+            </form>
+        </div>
+    {% else %}
+            <div class="navbar-rightt">
+                <span class="navbar-links">
+                    <button type="button">
+                        <a href="{% url 'list_recipe' %}">
+                            <i class="fas fa-utensils"></i>
+                             Recipes
+                        </a>
+                    </button>
+                    <button type="button">
+                        <a href="{% url 'login' %}">
+                            <i class="fas fa-sign-in-alt"></i>
+                             Login
+                        </a>
+                    </button>
+                    <button type="button">
+                        <a href="{% url 'signup' %}">
+                            <i class="fas fa-user-plus"></i> 
+                            Sign Up
+                        </a>
+                    </button>
+                </span>
+             </div>
+               
+    {% endif %}
+       
+</nav>

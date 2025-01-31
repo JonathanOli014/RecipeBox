@@ -1,0 +1,75 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% block content %}
+<div class="profile_view">
+    <div class="profile_image">
+        <form method="post" action="{% url 'update_profile_picture' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            <label for="profile_picture_input" class="profile_picture_label">
+                {% if profile_user.userprofile.profile_picture %}
+                    <img src="{{ profile_user.userprofile.profile_picture.url }}" alt="{{ profile_user.username }}" class="profile_picture">
+                {% else %}
+                    <img src="/media/profile_pictures/default.jpg" alt="{{ profile_user.username }}" class="profile_picture">
+                {% endif %}
+            </label>
+         <input type="file" id="profile_picture_input" name="profile_picture" class="profile_picture_input" onchange="this.form.submit()" hidden>
+        </form>
+    </div>
+    <div class="information">
+        <h1 class="profile_name">{{ profile_user.first_name }} {{ profile_user.last_name }}</h1>
+        <strong><p>Email </p></strong>
+        <p>
+            <i class="fas fa-envelope">&nbsp;&nbsp;&nbsp;</i>
+            {{ profile_user.email }}
+        </p>
+        {% if profile_user.recipe_set.count == 0 %}
+                <strong><p>Created Recipes</p></strong>
+            {% elif profile_user.recipe_set.count == 1 %}
+                <strong><p>Created Recipe</p></strong>
+            {% else %}
+                <strong><p>Created Recipes</p></strong>
+        {% endif %}
+        <p>
+            <i class="fas fa-book">&nbsp;&nbsp;&nbsp;</i>
+            {{ profile_user.recipe_set.count }}
+        </p>
+    </div>
+    
+    <br>
+    {% if profile_user.recipe_set.count == 0 %}
+        <h2 class="grid_title">Created Recipe</h2>
+    {% elif profile_user.recipe_set.count == 1 %}
+        <h2 class="grid_title">Created Recipe</h2>
+    {% else %}
+        <h2 class="grid_title">Created Recipes</h2>
+    {% endif %}
+    <div class="recipe_grid">
+        {% for recipe in recipes %}
+        <div class="recipe_post">
+            <div class="recipe_image">
+                <a href="{% url 'view_recipe' recipe.pk %}"><img src="{{ recipe.recipeImage.url }}" alt="{{ recipe.recipeName }}"></a>
+            </div>
+            <h3><a href="{% url 'view_recipe' recipe.pk %}">{{ recipe.recipeName }}</a></h3>
+            <div class="sub_infoo">
+                <p class="serving">
+                    <i class="fas fa-utensils"></i>
+                    {{ recipe.servings }}
+                
+                <p>
+                    <i class="fas fa-clock"></i>
+                    {{ recipe.cookTime }} minutes
+                </p>
+            </div>
+            <div class="created_by">
+                {% if recipe.createdBy.userprofile.profile_picture %}
+                     <img src="{{ recipe.createdBy.userprofile.profile_picture.url }}" alt="{{ recipe.createdBy.username }}" class="profile_picture">
+                 {% else %}
+                    <img src="/media/profile_pictures/default.jpg" alt="{{ recipe.createdBy.username }}" class="profile_picture">
+                {% endif %}
+                <p>{{ recipe.createdBy.first_name }} {{ recipe.createdBy.last_name }}</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock content %}

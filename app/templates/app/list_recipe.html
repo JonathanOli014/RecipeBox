@@ -1,31 +1,82 @@
 {% extends 'app/base.html' %}
 {% load static %}
 {% block content %}
-    <br>
-    <div class="recipe_list">
-        <a href="{% url 'add_recipe' %}">+ New Recipe</a>
-        {% for recipe in recipes  %}
-            <h1><a href="{% url 'view_recipe' recipe.pk %}">{{ recipe.recipeName }}</a></h1>
-            
-            <p>
-                <b>By:</b>
-                {{ recipe.createdBy }}
-            </p>
-
-            <p>
-                <b>Category:</b>
-                {% for category in recipe.recipeCategory.all %}
-                    {{ category.categoryName }}{% if not forloop.last %}, {% endif %}
+    {% if user.is_authenticated %}
+        <br>
+        <div class="recipe_list">
+                <a href="{% url 'add_recipe' %}">
+                    <button type="button" class="createbtn"> + Add Recipe</button>
+                </a>
+                <h1>All Recipes</h1>
+            <div class="recipe_grid">
+                {% for recipe in recipes  %}
+                <div class="recipe_post">
+                    <div class="recipe_image">
+                        <a href="{% url 'view_recipe' recipe.pk %}">
+                            {% if recipe.recipeImage %}
+                                <img src="{{ recipe.recipeImage.url }}" alt="{{ recipe.recipeName }}">
+                            {% else %}
+                                <img src=" '/media/images/default.jpg' " alt="{{ recipe.recipeName }}">
+                            {% endif %}
+                        </a>
+                    </div>
+                        <h3><a href="{% url 'view_recipe' recipe.pk %}">{{ recipe.recipeName }}</a></h3>
+                    <div class="sub_infoo">
+                        <p class="serving">
+                            <i class="fas fa-utensils"></i>
+                            {{ recipe.servings }}
+                        
+                        <p>
+                            <i class="fas fa-clock"></i>
+                            {{ recipe.cookTime }} minutes
+                        </p>
+                    </div>
+                    <div class="created_by">
+                        {% if recipe.createdBy.userprofile.profile_picture %}
+                            <img src="{{ recipe.createdBy.userprofile.profile_picture.url }}" alt="{{ recipe.createdBy.username }}" class="profile_picture">
+                        {% else %}
+                            <img src="/media/profile_pictures/default.jpg" alt="{{ recipe.createdBy.username }}" class="profile_picture">
+                        {% endif %}
+                        <p>{{ recipe.createdBy.first_name }} {{ recipe.createdBy.last_name }}</p>
+                    </div>
+                </div>
                 {% endfor %}
-            </p>
-            
-            <p>
-                <b>Posted At:</b>
-                {{ recipe.createdAt }} <br>
-            </p>
-        {% endfor %}
-    </div>
- <script src="{% static 'js/base.js' %}"></script>
-
+            </div>
+        </div>
+        {% else %}
+        <br>
+        <div class="recipe_list">
+                <h1>All Recipes</h1>
+            <div class="recipe_grid">
+                {% for recipe in recipes  %}
+                <div class="recipe_post">
+                    <div class="recipe_image">
+                        <a href="{% url 'view_recipe' recipe.pk %}"><img src="{{ recipe.recipeImage.url }}" alt="{{ recipe.recipeName }}"></a>
+                    </div>
+                        <h3><a href="{% url 'view_recipe' recipe.pk %}">{{ recipe.recipeName }}</a></h3>
+                    <div class="sub_infoo">
+                        <p class="serving">
+                            <i class="fas fa-utensils"></i>
+                            {{ recipe.servings }}
+                        
+                        <p>
+                            <i class="fas fa-clock"></i>
+                            {{ recipe.cookTime }} minutes
+                        </p>
+                    </div>
+                    <div class="created_by">
+                        {% if recipe.createdBy.userprofile.profile_picture %}
+                            <img src="{{ recipe.createdBy.userprofile.profile_picture.url }}" alt="{{ recipe.createdBy.username }}" class="profile_picture">
+                        {% else %}
+                            <img src="/media/profile_pictures/default.jpg" alt="{{ recipe.createdBy.username }}" class="profile_picture">
+                        {% endif %}
+                        <p>{{ recipe.createdBy.first_name }} {{ recipe.createdBy.last_name }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+    <script src="{% static 'js/base.js' %}"></script>
 {% endblock content %}
 
