@@ -119,30 +119,59 @@ def view_recipe(request, pk):
     recipe = get_object_or_404(Recipe, pk=pk)
     creator = recipe.createdBy
     recipe_count = Recipe.objects.filter(createdBy=creator).count()
-    comments = Comment.objects.filter(recipe=recipe).order_by('-createdAt')
     ratings = Rating.objects.filter(recipe=recipe)
     average_rating = ratings.aggregate(Avg('score'))['score__avg'] if ratings.exists() else None
-    can_rate = request.user != creator
+    can_rate = request.user.is_authenticated and request.user != creator
+    comments = Comment.objects.filter(recipe=recipe).order_by('-createdAt')
 
     if request.method == 'POST':
-        if 'comment' in request.POST:
-            text = request.POST.get('text')
-            if text:
-                Comment.objects.create(recipe=recipe, user=request.user, text=text)
-        elif 'rating' in request.POST:
-            score = request.POST.get('score')
-            if score:
-                Rating.objects.update_or_create(recipe=recipe, user=request.user, defaults={'score': score})
-
-        return redirect('view_recipe', pk=recipe.pk)
+        if request.user.is_authenticated:
+            if 'text' in request.POST:
+                text = request.POST.get('text')
+                comment = Comment.objects.create(recipe=recipe, user=request.user, text=text)
+                comment.save()
+            if 'score' in request.POST:
+                score = request.POST.get('score')
+                if score:
+                    Rating.objects.update_or_create(recipe=recipe, user=request.user, defaults={'score': score})
+            return redirect('view_recipe', pk=recipe.pk)
+        else:
+            return redirect('login')
 
     return render(request, 'app/view_recipe.html', {
         'view_recipe': recipe,
         'recipe_count': recipe_count,
-        'comments': comments,
         'average_rating': average_rating,
         'can_rate': can_rate,
+        'comments': comments,
     })
+
+# def view_recipe(request, pk):
+#     recipe = get_object_or_404(Recipe, pk=pk)
+#     creator = recipe.createdBy
+#     recipe_count = Recipe.objects.filter(createdBy=creator).count()
+#     ratings = Rating.objects.filter(recipe=recipe)
+#     average_rating = ratings.aggregate(Avg('score'))['score__avg'] if ratings.exists() else None
+#     can_rate = request.user != creator
+
+#     if request.method == 'POST':
+#         if request.user.is_authenticated:
+#             if 'rating' in request.POST:
+#                 score = request.POST.get('score')
+#                 if score:
+#                     Rating.objects.update_or_create(recipe=recipe, user=request.user, defaults={'score': score})
+
+#             return redirect('view_recipe', pk=recipe.pk)
+#         else:
+#             return redirect('login')
+
+#     return render(request, 'app/view_recipe.html', {
+#         'view_recipe': recipe,
+#         'recipe_count': recipe_count,
+#         'average_rating': average_rating,
+#         'can_rate': can_rate,
+#     })
+
 
 def list_recipes(request):
     query = request.GET.get('search')

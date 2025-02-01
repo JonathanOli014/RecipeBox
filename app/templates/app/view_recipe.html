@@ -16,7 +16,6 @@
                 {% endfor %}
             </p>
         </div>
-
         <div class="recipe_imageview">
                 {% if view_recipe.recipeImage %}
                     <img src="{{ view_recipe.recipeImage.url }}" alt="{{ view_recipe.recipeName }}">
@@ -53,7 +52,6 @@
                 {% endif %}
             </div>
         </div>
-
         <div class="sub_info"> 
             <p class="serving">
                 Servings: <i class="fas fa-utensils"></i> {{ view_recipe.servings }}
@@ -110,6 +108,7 @@
                 {% endfor %}
             </ol>
         </div>
+        
         <div class="comments_section">
             <h3>Comments</h3>
             {% for comment in comments %}
@@ -117,41 +116,42 @@
                     {% if comment.user.userprofile.profile_picture %}
                         <img src="{{ comment.user.userprofile.profile_picture.url }}" alt="{{ comment.user.username }}" class="comment-profile-picture">
                     {% else %}
-                        <img src="/media/profile_pictures/default.jpg" alt="{{ comment.user.username }}" class="comment-profile-picture">
+                        <img src='/media/profile_pictures/default.jpg' alt="{{ comment.user.username }}" class="comment-profile-picture">
                     {% endif %}
-                        <p><strong>{{ comment.user.first_name }} {{ comment.user.last_name }}</strong> ({{ comment.createdAt }}) </p>
+                    <p><strong>{{ comment.user.first_name }} {{ comment.user.last_name }}</strong> ({{ comment.createdAt }}) </p>
                 </div>
-                <p class="text_comment">{{ comment.text }}</p>
+                    <p class="text_comment">{{ comment.text }}</p>
             {% endfor %}
-
             {% if user.is_authenticated %}
                 <form method="post">
                     {% csrf_token %}
-                    <textarea name="text" placeholder="Add a comment..." required></textarea>
-                    <button type="submit" name="comment">Comment</button>
+                    <div class="commentDiv">
+                        <textarea name="text" placeholder="Add a comment..." required></textarea>
+                        <button type="submit" name="comment">Comment</button>
+                    </div>
                 </form>
             {% else %}
                 <p>Login to add a comment.</p>
             {% endif %}
-
-            <h3>Rate this Recipe</h3><br>
-            {% if user.is_authenticated and can_rate%}
-                <form class="formRating" method="post">
-                    {% csrf_token %}
-                    <div class="star-rating">
-                        {% for x in "12345" %}
-                            <input type="radio" id="star{{ x }}" name="score" value="{{ x }}" required>
-                            <label for="star{{ x }}" title="{{ x }} stars">
-                                <i class="fas fa-star"></i>
-                            </label>
-                        {% endfor %}
+        </div>
+                <h3>Rate this Recipe</h3><br>
+                {% if user.is_authenticated and can_rate%}
+                    <form  method="post">
+                        {% csrf_token %}
+                        <div class="star-rating">
+                            {% for x in "12345" %}
+                                <input type="radio" id="star{{ x }}" name="score" value="{{ x }}" required>
+                                <label for="star{{ x }}" title="{{ x }} stars">
+                                    <i class="fas fa-star"></i>
+                                </label>
+                            {% endfor %}
+                        <button type="submit" name="rating" class="rating">Rate</button>
                     </div>
-                    <button type="submit" name="rating">Rate</button>
-                </form>
-            {% elif user.is_authenticated %}
-                <p>You cannot rate your own recipe.</p>
-            {% else %}
-                <p>Login to rate this recipe.</p>
-            {% endif %}
+                    </form>
+                {% elif user.is_authenticated %}
+                    <p>You cannot rate your own recipe.</p>
+                {% else %}
+                    <p>Login to rate this recipe.</p>
+                {% endif %}
     </div>
 {% endblock content %}

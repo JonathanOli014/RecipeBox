@@ -51,7 +51,7 @@ class SaveRecipes(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     recipes = models.ManyToManyField(Recipe, related_name='saved_recipes')
 
-def __str__(self):
+    def __str__(self):
         return f'Saved Recipes by {self.user.username}'
 
 class Comment(models.Model):

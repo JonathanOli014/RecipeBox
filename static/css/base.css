@@ -517,19 +517,6 @@ h1{
     margin-top: 20px;
 }
 
-/* .formRating{
-    margin-left: 0;
-    margin-top: 0;
-} */
-
-
-/* .rating_section{
-    border: solid 1px black;
-    margin: 0;
-    padding: 0;
-    width: 500px;
-    height: 100px;
-} */
 .comment {
     display: flex;
     align-items: center;
@@ -546,14 +533,6 @@ h1{
 .text_comment {
     margin-left: 50px;
     margin-bottom: 15px;
-}
-
-.comments_section form {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    /* margin-top: 20px; */
-    margin-bottom: 30px;
 }
 
 .comments_section textarea {
@@ -574,30 +553,23 @@ h1{
     color: white;
     cursor: pointer;
     font-size: 16px;
-    /* margin-bottom: 10px; */
+    height: 40px;
+    margin-top: 10px;
+    margin-left: 20px;
 }
 
-/* .comments_section button:hover,
-.rating_section button:hover {
-    background-color: #2d4373;
-} */
-
-/* .rating_section select {
-    display: flex;
-    align-items: center;
-    padding: 10px;
-    border: 1px solid #ccc;
+.rating{
+    padding: 5px 10px;
+    border: none;
     border-radius: 5px;
-    margin-bottom: 10px;
+    background-color: #017a0d;
+    color: white;
+    cursor: pointer;
     font-size: 16px;
-    background-color: white;
-    color: #333;
-} */
-
-/* .rating_section select option {
-    padding: 10px;
-    font-size: 16px;
-} */
+    height: 40px;
+    margin-top: -30px;
+    margin-left: 20px;
+}
 
 .fa-star{
     color: #ff9800;
@@ -727,11 +699,12 @@ h1{
     color: #f5b301;
 }
 .star-rating{
-    margin-top: o;
-    /* margin-bottom: 100px; */
+    margin-top: -200;
     display: flex;
     justify-content: center;
     align-items: top;
+    margin-right: 1660px;
+    margin-bottom: 50px;
 }
 .star-rating label{
     text-align: start;
@@ -744,4 +717,8 @@ h1{
 
 .profile_picture_input {
     display: none;
+}
+
+.commentDiv{
+    display: flex;
 }
