@@ -146,33 +146,6 @@ def view_recipe(request, pk):
         'comments': comments,
     })
 
-# def view_recipe(request, pk):
-#     recipe = get_object_or_404(Recipe, pk=pk)
-#     creator = recipe.createdBy
-#     recipe_count = Recipe.objects.filter(createdBy=creator).count()
-#     ratings = Rating.objects.filter(recipe=recipe)
-#     average_rating = ratings.aggregate(Avg('score'))['score__avg'] if ratings.exists() else None
-#     can_rate = request.user != creator
-
-#     if request.method == 'POST':
-#         if request.user.is_authenticated:
-#             if 'rating' in request.POST:
-#                 score = request.POST.get('score')
-#                 if score:
-#                     Rating.objects.update_or_create(recipe=recipe, user=request.user, defaults={'score': score})
-
-#             return redirect('view_recipe', pk=recipe.pk)
-#         else:
-#             return redirect('login')
-
-#     return render(request, 'app/view_recipe.html', {
-#         'view_recipe': recipe,
-#         'recipe_count': recipe_count,
-#         'average_rating': average_rating,
-#         'can_rate': can_rate,
-#     })
-
-
 def list_recipes(request):
     query = request.GET.get('search')
     if query:
